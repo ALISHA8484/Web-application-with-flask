@@ -1,13 +1,24 @@
-from flask import Blueprint ,render_template,request,flash ,redirect,url_for
+from flask import Blueprint ,render_template,request,flash ,redirect,url_for,make_response
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+import secrets
+import datetime
+
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login' , methods=['GET', 'POST'])
 def login():
+
+    token = request.cookies.get('token')
+    if token:
+        user = User.query.filter_by(token=token).first()
+        if user:
+            flash('Logged in with cookie!', category='success')
+            return redirect(url_for('views.home'))
+        
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -16,9 +27,20 @@ def login():
 
         if user:
             if check_password_hash(user.password, password):
+
+                remember = True if request.form.get('remember') else False
+                token = secrets.token_hex(16)
+                user.token = token
+                db.session.commit()
+                response = make_response(redirect(url_for('views.home')))
+                if(remember):
+                    response.set_cookie('token', user.token, httponly=True)
+                else:
+                    expire_date = datetime.datetime.now() + datetime.timedelta(seconds=3)
+                    response.set_cookie('token', user.token, expires=expire_date, httponly=True)
                 flash('Logged in successfully!', category='success')
-                login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                login_user(user)
+                return response
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
@@ -29,6 +51,16 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
+    token = request.cookies.get('token')
+
+    if token:
+        user = User.query.filter_by(token=token).first()
+        if user:
+            user.token = None
+            db.session.commit()
+
+    response = make_response(redirect(url_for('auth.login')))
+    response.set_cookie('token', '', expires=0)
     logout_user()
     return redirect(url_for('auth.login'))
 
@@ -53,7 +85,7 @@ def sign_up():
         elif password1 != password2:
             flash('Passwords do not match',category= 'error')
         else:
-            new_user = User(email=email, name=name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+            new_user = User(email=email, name=name, token = None , password=generate_password_hash(password1, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
