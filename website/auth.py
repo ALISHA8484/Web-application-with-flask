@@ -15,6 +15,7 @@ def login():
     token = request.cookies.get('token')
     if token:
         user = User.query.filter_by(token=token).first()
+        login_user(user)
         if user:
             flash('Logged in with cookie!', category='success')
             return redirect(url_for('views.home'))
@@ -32,15 +33,20 @@ def login():
                 token = secrets.token_hex(16)
                 user.token = token
                 db.session.commit()
-                response = make_response(redirect(url_for('views.home')))
-                if(remember):
-                    response.set_cookie('token', user.token, httponly=True)
+                if(user.is_admin == True):
+                   flash('Welcome Admin', category='success')
+                   response = make_response(redirect(url_for('views.admin_panel')))
+                   response.set_cookie('token', user.token, httponly=True)
+                   return response
                 else:
-                    expire_date = datetime.datetime.now() + datetime.timedelta(seconds=3)
-                    response.set_cookie('token', user.token, expires=expire_date, httponly=True)
-                flash('Logged in successfully!', category='success')
-                login_user(user)
-                return response
+                    response = make_response(redirect(url_for('view.home')))
+                    if(remember):
+                        response.set_cookie('token', user.token, max_age=10 , httponly=True)
+                    else:
+                        response.set_cookie('token', user.token,max_age=3, httponly=True)
+                    flash('Logged in successfully!', category='success')
+                    login_user(user)
+                    return response
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
@@ -62,7 +68,7 @@ def logout():
     response = make_response(redirect(url_for('auth.login')))
     response.set_cookie('token', '', expires=0)
     logout_user()
-    return redirect(url_for('auth.login'))
+    return response
 
 @auth.route('/sign-up' , methods=['GET', 'POST'])
 def sign_up():

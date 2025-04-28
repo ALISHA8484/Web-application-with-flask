@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center">Admin Panel - User List</h1>
+  
+  <table class="table table-striped mt-4">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Is Admin?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          {% if user.is_admin %}
+            <span class="badge badge-success">Admin</span>
+          {% else %}
+            <span class="badge badge-secondary">User</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

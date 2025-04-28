@@ -16,4 +16,5 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     token = db.Column(db.String(500), nullable=True)
+    is_admin = db.Column(db.Boolean, default=False)
     notes = db.relationship('Note')
