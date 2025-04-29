@@ -5,20 +5,25 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import secrets
 import datetime
-
+from website import limiter
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login' , methods=['GET', 'POST'])
+@limiter.limit("5 per minute", methods=["POST"],per_method=True)
 def login():
 
     token = request.cookies.get('token')
     if token:
         user = User.query.filter_by(token=token).first()
-        login_user(user)
-        if user:
-            flash('Logged in with cookie!', category='success')
-            return redirect(url_for('views.home'))
+        if user :
+            login_user(user)
+            if user.is_admin:
+                flash('Logged in with cookie!', category='success')
+                return redirect(url_for('views.admin_panel'))
+            else:
+               flash('Logged in with cookie!', category='success')
+               return redirect(url_for('views.home'))
         
     if request.method == 'POST':
         email = request.form.get('email')
@@ -39,7 +44,7 @@ def login():
                    response.set_cookie('token', user.token, httponly=True)
                    return response
                 else:
-                    response = make_response(redirect(url_for('view.home')))
+                    response = make_response(redirect(url_for('views.home')))
                     if(remember):
                         response.set_cookie('token', user.token, max_age=10 , httponly=True)
                     else:
@@ -56,6 +61,7 @@ def login():
 
 @auth.route('/logout')
 @login_required
+@limiter.exempt
 def logout():
     token = request.cookies.get('token')
 
@@ -66,7 +72,7 @@ def logout():
             db.session.commit()
 
     response = make_response(redirect(url_for('auth.login')))
-    response.set_cookie('token', '', expires=0)
+    response.set_cookie('token', '', max_age=0, expires=0, httponly=True)
     logout_user()
     return response
 

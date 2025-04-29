@@ -1,10 +1,11 @@
-from website import create_app,db
+from website import create_app,db,limiter , render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from website.models import User
 
 app = create_app()
 with app.app_context():
     db.create_all()
+    limiter.init_app(app)
     admin_email = "admin@example.com"
     admin_password = "admin1234"
 

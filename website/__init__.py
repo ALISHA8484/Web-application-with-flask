@@ -1,18 +1,24 @@
-from flask import Flask
+from flask import Flask , render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from datetime import timedelta
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_login import  current_user
 db = SQLAlchemy()
 DB_NAME = "database.db"
-
+limiter = Limiter(
+    key_func=get_remote_address
+)
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'your-secret-key'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     #app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=5)
     db.init_app(app)
+
+    
 
     from .views import views
     from .auth import auth
@@ -31,8 +37,11 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return render_template("limiter.html",user = current_user), 429
     return app
+
 
 def create_database(app):
     if not path.exists('website/' + DB_NAME):

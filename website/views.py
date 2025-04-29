@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from .models import Note , User
 from . import db
 import json
-
+from website import limiter
 views = Blueprint('views', __name__)
 
 @views.route('/', methods=['GET', 'POST'])
@@ -43,6 +43,7 @@ def delete_note():
     return jsonify({})
 
 @views.route('/admin')
+@limiter.exempt
 def admin_panel():
     token = request.cookies.get('token')
     user = User.query.filter_by(token=token).first()

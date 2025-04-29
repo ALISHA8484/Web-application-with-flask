@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Too Many Requests{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+  <div class="text-center">
+    <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="Rate Limit" width="100" class="mb-4">
+
+    <h2 class="text-danger mb-3">Whoa! Too Many Attempts 🚫</h2>
+
+    <p class="lead text-muted">
+      You’ve tried logging in too many times.<br>
+      For security reasons, please wait a little while before trying again.
+    </p>
+
+    <p class="text-muted mt-3">
+      Try again in a few minutes, or go back to the login page.
+    </p>
+
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary mt-3">Return to Login</a>
+  </div>
+</div>
+{% endblock %}
