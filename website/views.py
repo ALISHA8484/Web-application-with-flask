@@ -16,10 +16,17 @@ def home():
 
     user = User.query.filter_by(token=token).first()
     if not user:
-        flash('Session expired or invalid token.', category='error')
+        flash('Your session has expired. The page will reload.', category='error')
         return redirect(url_for('auth.login'))
     
     if request.method == 'POST':
+        token = request.cookies.get('token')
+
+        user = User.query.filter_by(token=token).first()
+        if not user:
+         flash('Your session has expired. The page will reload.', category='error')
+         return redirect(url_for('auth.login'))
+        
         note = request.form.get('note')
         
         if len(note) < 1:
@@ -35,6 +42,13 @@ def home():
 @views.route('/delete-note', methods=['POST'])
 @login_required
 def delete_note():
+    token = request.cookies.get('token')
+
+    user = User.query.filter_by(token=token).first()
+    if not user:
+        flash('Your session has expired. The page will reload.', category='error')
+        return redirect(url_for('auth.login'))
+    
     note = json.loads(request.data)
     noteId = note['noteId']
     note = Note.query.get(noteId)

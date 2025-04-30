@@ -46,7 +46,7 @@ def login():
                 else:
                     response = make_response(redirect(url_for('views.home')))
                     if(remember):
-                        response.set_cookie('token', user.token, max_age=10 , httponly=True)
+                        response.set_cookie('token', user.token, max_age=60*60*24*10 , httponly=True)
                     else:
                         response.set_cookie('token', user.token,max_age=3, httponly=True)
                     flash('Logged in successfully!', category='success')
