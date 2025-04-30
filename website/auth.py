@@ -19,10 +19,10 @@ def login():
         if user :
             login_user(user)
             if user.is_admin:
-                flash('Logged in with cookie!', category='success')
+                #flash('Logged in with cookie!', category='success')
                 return redirect(url_for('views.admin_panel'))
             else:
-               flash('Logged in with cookie!', category='success')
+               #flash('Logged in with cookie!', category='success')
                return redirect(url_for('views.home'))
         
     if request.method == 'POST':

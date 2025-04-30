@@ -7,8 +7,11 @@ from website import limiter
 views = Blueprint('views', __name__)
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
 def home():
+    if not current_user.is_authenticated:
+        flash('Please log in to access this page.', category='error')
+        return redirect(url_for('auth.login'))
+
     token = request.cookies.get('token')
 
     user = User.query.filter_by(token=token).first()
