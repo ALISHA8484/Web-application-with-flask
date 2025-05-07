@@ -41,7 +41,8 @@ def login():
                 if(user.is_admin == True):
                    flash('Welcome Admin', category='success')
                    response = make_response(redirect(url_for('views.admin_panel')))
-                   response.set_cookie('token', user.token, httponly=True)
+                   response.set_cookie('token', user.token,max_age=60*60*24*10, httponly=True)
+                   login_user(user)
                    return response
                 else:
                     response = make_response(redirect(url_for('views.home')))
@@ -64,17 +65,22 @@ def login():
 @limiter.exempt
 def logout():
     token = request.cookies.get('token')
+    user = current_user  
 
-    if token:
-        user = User.query.filter_by(token=token).first()
-        if user:
+    if token and user.is_authenticated:
+        if user.token == token:
             user.token = None
             db.session.commit()
+            print(f"Token cleared for: {user.email}")
+        else:
+            print("Token mismatch or already cleared.")
+
+    logout_user()
 
     response = make_response(redirect(url_for('auth.login')))
     response.set_cookie('token', '', max_age=0, expires=0, httponly=True)
-    logout_user()
     return response
+
 
 @auth.route('/sign-up' , methods=['GET', 'POST'])
 def sign_up():

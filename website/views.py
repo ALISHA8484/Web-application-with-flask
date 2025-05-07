@@ -14,7 +14,7 @@ def home():
     user = User.query.filter_by(token=token).first()
     if not user:
         flash('Your session has expired. The page will reload.', category='error')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.logout'))
     
     if request.method == 'POST':
         token = request.cookies.get('token')
@@ -22,7 +22,7 @@ def home():
         user = User.query.filter_by(token=token).first()
         if not user:
          flash('Your session has expired. The page will reload.', category='error')
-         return redirect(url_for('auth.login'))
+         return redirect(url_for('auth.logout'))
         
         note = request.form.get('note')
         
@@ -44,7 +44,7 @@ def delete_note():
     user = User.query.filter_by(token=token).first()
     if not user:
         flash('Your session has expired. The page will reload.', category='error')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.logout'))
     
     note = json.loads(request.data)
     noteId = note['noteId']

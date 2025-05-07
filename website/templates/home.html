@@ -17,19 +17,4 @@
         <button type="submit" class="btn btn-primary">Add Note</button>
     </div>
 </form>
-<script type="text/javascript">
-    // ارسال درخواست به سرور برای چک کردن وضعیت توکن
-    fetch('/')
-        .then(response => {
-            if (response.status === 401) {
-                // توکن منقضی شده، ریدایرکت به لاگین
-                setTimeout(function() {
-                    window.location.href = "{{ url_for('auth.login') }}";  // ریدایرکت خودکار به صفحه لاگین
-                }, 1000);  // بعد از 1 ثانیه صفحه رفرش می‌شود
-            }
-        })
-        .catch(error => {
-            console.log("Error:", error);
-        });
-</script>
 {% endblock %}

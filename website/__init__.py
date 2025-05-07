@@ -13,7 +13,7 @@ limiter = Limiter(
 )
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your-secret-key'
+    app.config['SECRET_KEY'] = 'ALISHA-Hasti'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=5)
     db.init_app(app)
@@ -32,7 +32,9 @@ def create_app():
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
+    login_manager.login_message = None 
     login_manager.init_app(app)
+
 
     @login_manager.user_loader
     def load_user(id):
