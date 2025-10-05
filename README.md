@@ -1,4 +1,4 @@
-# Flask Note-Taking Web Application 📝
+# Web-application-with-flask 📝
 
 This project is a simple yet secure web application developed for a 4th-semester Computer Engineering course. It allows users to register, log in, and manage personal notes. The application emphasizes backend fundamentals, including robust user authentication, role-based access control, and security against common web vulnerabilities.
 
@@ -103,14 +103,19 @@ Follow these instructions to get a local copy of the project up and running.
 ## 🖼️ Images
 
 ### Login page
+<img width="1000" height="562" alt="Login page" src="https://github.com/user-attachments/assets/9483d210-0db4-4baf-bc2b-55459990b90f" />
 
 ### Sign up page
+<img width="1000" height="562" alt="Sign up page" src="https://github.com/user-attachments/assets/5d0ddfec-2df1-43a2-8bd1-c2f3e75c3b83" />
 
 ### User panel
+<img width="1000" height="562" alt="User panel" src="https://github.com/user-attachments/assets/88d68581-20f2-4c90-bfce-e043222c4c68" />
 
 ### Admin panel
+<img width="1000" height="562" alt="Admin panel" src="https://github.com/user-attachments/assets/cf993646-f444-4e00-be9b-92c906c47c62" />
 
 ### Bruteforce protection
+<img width="1000" height="562" alt="Bruteforce protection" src="https://github.com/user-attachments/assets/ea138aa4-2fd1-47eb-b2d7-c7d57e9c4d3a" />
 
 
 
